@@ -6,4 +6,5 @@ conn = st.connection("gsheets", type=GSheetsConnection)
 
 df = conn.read().iloc[:,:13]
 st.write(df.head())
+st.write(conn._spreadsheet)
 st.write(dir(conn))
