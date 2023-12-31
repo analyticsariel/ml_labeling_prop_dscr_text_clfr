@@ -174,9 +174,12 @@ if (st.session_state['user_name'] in ['Ariel', 'Liam', 'Maddy']):
     df.loc[(df[user_name.lower()] == '') & (df['label_category'] == 'single label'), 'label_priority'] = 3
     df.loc[(df['label_category'] == 'not labeled') & (df['fixer_upper_flag'] == 'TRUE'), 'label_priority'] = 2
     df.loc[(df['label_category'] == 'not labeled') & (df['fixer_upper_flag'] == 'FALSE'), 'label_priority'] = 1
+    df.loc[(df['label_category'] == 'not labeled') & (df['proba_distressed'] <= 0.60) & (df['proba_distressed'] >= 0.40), 'low_confidence_v1_model'] = 1
     
     user_labeled_zpids_in_session = st.session_state['user_labeled_zpid'][user_name]
     if str(len(user_labeled_zpids_in_session)).split('.')[0][-1] in ['7', '8', '9']:
+        df = df.sort_values(by=['low_confidence_v1_model', 'proba_distressed', 'price_prct_diff'], ascending=True)
+    elif str(len(user_labeled_zpids_in_session)).split('.')[0][-1] in ['5', '6']:
         df = df.sort_values(by=['label_priority', 'proba_distressed', 'price_prct_diff'], ascending=True)
     else:
         df = df.sort_values(by=['label_priority', 'proba_distressed', 'price_prct_diff'], ascending=False)
