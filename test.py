@@ -9,7 +9,8 @@ import streamlit as st
 # import tempfile
 # from oauth2client.service_account import ServiceAccountCredentials
 
-st.write('00000' + st.secrets["aws_access_key"])
+# st.write('00000' + st.secrets["aws_access_key"])
+st.write('00000' + st.secrets["AWS_ACCESS_KEY"])
 
 # ##################################
 # #           FUNCTIONS            #
