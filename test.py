@@ -11,7 +11,7 @@ try:
 except:
     st.write('spreadsheet', conn._spreadsheet())
 try:
-    st.write('client1', conn.client)
+    st.write('client1', conn.client())
 except:
     st.write('client2', conn.client())
 st.write('worksheet', conn._worksheet)
