@@ -3,7 +3,10 @@ from annotated_text import annotated_text
 import pandas as pd
 import numpy as np
 import plotly.express as px
+import boto3
 import gspread
+import json
+import tempfile
 from oauth2client.service_account import ServiceAccountCredentials
 
 
@@ -61,6 +64,37 @@ def get_final_label(x):
         return max(labels,key=labels.count)
     else:
         return None
+    
+def read_json_file(bucket, key):
+    """
+    Reads json file from s3
+
+    Args:
+        bucket [string]: Bucket path
+        key [string]: File path
+
+    Returns:
+        json object
+    """
+    
+    # Initialize boto3 to use the S3 client.
+    s3_client = boto3.client('s3', 
+        aws_access_key_id=st.secrets["AWS_ACCESS_KEY"],
+          aws_secret_access_key=st.secrets["AWS_SECRET_KEY"])
+
+    # Get the file inside the S3 Bucket
+    s3_response = s3_client.get_object(
+        Bucket=bucket,
+        Key=key
+    )
+
+    # Get the Body object in the S3 get_object() response
+    s3_object_body = s3_response.get('Body')
+
+    # Read the data in bytes format
+    content = s3_object_body.read()
+
+    return json.loads(content)
 
 
 ##################################
@@ -69,11 +103,18 @@ def get_final_label(x):
 st.set_page_config(layout="wide")
 st.title("ML Labeling Tool: Property Condition")
 st.markdown("###### Label property description to determine condition")
+
+# read gdrive credentials
+config = read_json_file(bucket='residentialpropertydata', key='api/gdrive_creds.json')
+tfile = tempfile.NamedTemporaryFile(mode="w+")
+json.dump(config, tfile)
+tfile.flush()
+
 # define the scope
 scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
 
 # add credentials to the account
-creds = ServiceAccountCredentials.from_json_keyfile_name('gdrive_creds.json', scope)
+creds = ServiceAccountCredentials.from_json_keyfile_name(tfile.name, scope)
 
 # authorize the clientsheet 
 client = gspread.authorize(creds)
