@@ -169,6 +169,7 @@ if (st.session_state['user_name'] in ['Ariel', 'Liam', 'Maddy']):
 
     # prepare dataset
     df = st.session_state['dataset_labeled']
+    
     # df = df.loc[(~df['zpid'] == '') & (~df['description'].isnull())]
     df.loc[(df[user_name.lower()] == '') & (df['label_category'] == 'discrepancy'), 'label_priority'] = 4
     df.loc[(df[user_name.lower()] == '') & (df['label_category'] == 'single label'), 'label_priority'] = 3
@@ -177,12 +178,16 @@ if (st.session_state['user_name'] in ['Ariel', 'Liam', 'Maddy']):
     df.loc[(df['label_category'] == 'not labeled') & (df['proba_distressed'] <= 0.60) & (df['proba_distressed'] >= 0.40), 'low_confidence_v1_model'] = 1
     
     user_labeled_zpids_in_session = st.session_state['user_labeled_zpid'][user_name]
-    if str(len(user_labeled_zpids_in_session)).split('.')[0][-1] in ['7', '8', '9']:
+    if str(len(user_labeled_zpids_in_session)).split('.')[0][-1] in ['9']:
         df = df.sort_values(by=['low_confidence_v1_model', 'proba_distressed', 'price_prct_diff'], ascending=True)
-    elif str(len(user_labeled_zpids_in_session)).split('.')[0][-1] in ['5', '6']:
-        df = df.sort_values(by=['label_priority', 'proba_distressed', 'price_prct_diff'], ascending=True)
+    elif str(len(user_labeled_zpids_in_session)).split('.')[0][-1] in ['5', '6', '7', '8']:
+        df = df\
+            .sort_values(by=['price_prct_diff'], ascending=False)\
+            .sort_values(by=['label_priority', 'proba_distressed'], ascending=True)
     else:
-        df = df.sort_values(by=['label_priority', 'proba_distressed', 'price_prct_diff'], ascending=False)
+        df = df\
+            .sort_values(by=['price_prct_diff'], ascending=False)\
+            .sort_values(by=['label_priority', 'proba_distressed'], ascending=False)
     
     # if len(user_labeled_zpids_in_session) != 0:
     df = df.loc[~df['zpid'].isin(user_labeled_zpids_in_session)]
@@ -254,7 +259,7 @@ if (st.session_state['user_name'] in ['Ariel', 'Liam', 'Maddy']):
 
     updated_keywords = [
         'adorable', 'beautiful', 'charm', 'clean', 'entertain', 'gorgeous', 'granite',
-        'hardwood', 'island', 'love', 'modern', 
+        'hardwood', 'island', 'love', 'luxury', 'modern', 
         'new', 'quartz', 'ready', 'redone', 'remarkable', 'remodel', 'reno', 'stainless',
         'upgrade', 'update'
     ]
