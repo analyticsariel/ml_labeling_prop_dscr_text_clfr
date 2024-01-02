@@ -178,9 +178,9 @@ if (st.session_state['user_name'] in ['Ariel', 'Liam', 'Maddy']):
     df.loc[(df['label_category'] == 'not labeled') & (df['proba_distressed'] <= 0.60) & (df['proba_distressed'] >= 0.40), 'low_confidence_v1_model'] = 1
     
     user_labeled_zpids_in_session = st.session_state['user_labeled_zpid'][user_name]
-    if str(len(user_labeled_zpids_in_session)).split('.')[0][-1] in ['9']:
+    if str(len(user_labeled_zpids_in_session)).split('.')[0][-1] in ['11']: # not using right now
         df = df.sort_values(by=['low_confidence_v1_model', 'proba_distressed', 'price_prct_diff'], ascending=True)
-    elif str(len(user_labeled_zpids_in_session)).split('.')[0][-1] in ['5', '6', '7', '8']:
+    elif str(len(user_labeled_zpids_in_session)).split('.')[0][-1] in ['7', '8', '9']:
         df = df\
             .sort_values(by=['price_prct_diff'], ascending=False)\
             .sort_values(by=['label_priority', 'proba_distressed'], ascending=True)
